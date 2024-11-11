@@ -117,7 +117,7 @@ const App: React.FC = () => {
       </header>
       
 
-      <div className="container mx-auto px-20 py-4 h-[888px] max-md:h-auto">
+      <div className="container mx-auto px-20 py-4 h-auto max-md:h-auto">
         <div className="mb-4">
           <label htmlFor="genre" className="mr-2">Filter by Genre:</label>
           <select
