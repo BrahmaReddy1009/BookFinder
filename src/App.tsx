@@ -24,6 +24,8 @@ const App: React.FC = () => {
   const [selectedGenre, setSelectedGenre] = useState<string>("");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
+  const [visibleBooksCount, setVisibleBooksCount] = useState<number>(18); // Initially show 18 books
+
   const genres = ["Fiction", "Non-Fiction", "Science", "History", "Fantasy"];
 
   const fetchBooks = async (query: string, genre: string = "") => {
@@ -58,6 +60,7 @@ const App: React.FC = () => {
 
   const handleGenreChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedGenre(event.target.value);
+    setVisibleBooksCount(18); // Reset visible book count
     fetchBooks(searchTerm, event.target.value);
   };
 
@@ -76,17 +79,20 @@ const App: React.FC = () => {
 
   const handleInputChange = (value: string) => {
     setSearchTerm(value);
+    setVisibleBooksCount(18); // Reset visible book count
     fetchSuggestions(value);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
     setSearchTerm(suggestion);
+    setVisibleBooksCount(18); // Reset visible book count on suggestion click
     fetchBooks(suggestion, selectedGenre);
     setSuggestions([]);
   };
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
+      setVisibleBooksCount(18); // Reset visible book count on search
       fetchBooks(searchTerm, selectedGenre);
       setSuggestions([]);
     }
@@ -100,9 +106,13 @@ const App: React.FC = () => {
     setSelectedBook(null); // Close the details modal
   };
 
+  // Show more books
+  const handleViewAll = () => {
+    setVisibleBooksCount(books.length); // Show all books
+  };
+
   return (
     <>
-      
       <header className="sticky top-0 z-50 shadow-md p-4 bg-gray-800">
         <div className="flex flex-col md:flex-row justify-center items-center gap-10">
           <h1 className="text-3xl font-bold text-center text-indigo-400">NovelHunt</h1>
@@ -115,9 +125,8 @@ const App: React.FC = () => {
           />
         </div>
       </header>
-      
 
-      <div className="container mx-auto px-20 py-4 h-[888px] max-md:h-auto">
+      <div className="container mx-auto px-20 py-4 h-full max-md:h-auto">
         <div className="mb-4">
           <label htmlFor="genre" className="mr-2">Filter by Genre:</label>
           <select
@@ -140,20 +149,30 @@ const App: React.FC = () => {
           <p className="text-center text-red-500 mt-4">{error}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-4">
-  {books.length ? (
-    books.slice(0, 18).map((book) => (
-      <BookCard
-        key={book.key}
-        book={book}
-        onClick={() => handleBookClick(book)}
-        isSelected={selectedBook?.key === book.key}
-      />
-    ))
-  ) : (
-    <p className="text-center mt-4">No books found.</p>
-  )}
-</div>
-
+            {books.length ? (
+              books.slice(0, visibleBooksCount).map((book) => (
+                <BookCard
+                  key={book.key}
+                  book={book}
+                  onClick={() => handleBookClick(book)}
+                  isSelected={selectedBook?.key === book.key}
+                />
+              ))
+            ) : (
+              <p className="text-center mt-4">No books found.</p>
+            )}
+          </div>
+        )}
+        {/* Show View All button only when not loading and if there are more books */}
+        {!loading && visibleBooksCount < books.length && (
+          <div className="text-center mt-4">
+            <button
+              onClick={handleViewAll}
+              className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mb-20"
+            >
+              View All
+            </button>
+          </div>
         )}
       </div>
 
