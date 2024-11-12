@@ -25,7 +25,7 @@ The **Book Finder App** is a simple and interactive React application that allow
 2. Clone the repository:
 
 ```bash
-
+https://github.com/BrahmaReddy1009/BookFinder.git
 ```
 
 # BookFinder
